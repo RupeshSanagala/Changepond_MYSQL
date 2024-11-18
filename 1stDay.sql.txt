@@ -1,0 +1,78 @@
+CREATE TABLE products (
+  productCode varchar(15),
+  productName varchar(70) NOT NULL,
+  productLine varchar(50) NOT NULL,
+  productScale varchar(10) NOT NULL,
+  productVendor varchar(50) NOT NULL,
+  productDescription text NOT NULL,
+  quantityInStock smallint(6) NOT NULL,
+  buyPrice decimal(10,2) NOT NULL,
+  MSRP decimal(10,2) NOT NULL,
+  PRIMARY KEY (productCode),
+  FOREIGN KEY (productLine) REFERENCES productlines (productLine)
+);
+create database classicmodels;
+use classicmodels;
+show tables;
+CREATE TABLE productlines (
+  productLine varchar(50),
+  textDescription varchar(4000) DEFAULT NULL,
+  htmlDescription mediumtext,
+  image mediumblob,
+  PRIMARY KEY (productLine)
+);
+
+
+
+show tables;
+select * from products;
+desc productlines;
+
+use cdb;
+show tables;
+desc tasks;
+alter table tasks
+drop column description;
+
+create table checklist(
+id int auto_increment,
+task_id int,
+title varchar(255) not null,
+is_completed boolean not null Default False,
+primary key(id,task_id),
+foreign key(task_id)
+references tasks(task_id)
+on update restrict
+);
+
+create table subscribers(
+email varchar(300) not null unique);
+
+alter table subscribers
+add id int auto_increment primary key;
+
+alter table subscribers
+add phone int ;
+
+alter table subscribers
+drop column phone;
+
+alter table subscribers
+rename column id to s_id;
+
+Rename table subscribers to sub;
+
+desc sub;
+select*from sub;
+insert into sub(email,s_id)values('rupeshsanagala523@gmail.com',5256346),
+('raju@gmail.com',49683159);
+
+drop table movies_renamed;
+desc tasks;
+show tables;
+insert into tasks(task_id,title,start_date,due_date)values(100,'task1','2024-11-11','2024-11-12'),(101,'task2','2024-11-08','2024-11-05');
+desc checklist;
+select*from checklist;
+insert into checklist(id,task_id,title,is_completed)values(1243314,100,'task1',true),(1223514,101,'task2',true);
+
+

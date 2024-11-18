@@ -1,0 +1,107 @@
+show tables;
+desc products;
+desc productlines;
+
+select productcode,productname,textdescription 
+from products p inner join productlines p1
+on p.productline=p1.productline limit 2;
+
+desc orders;
+
+select o.ordernumber,o.status,sum(od.quantityordered*od.priceeach) "total_sales" 
+from orders o ,orderdetails od
+where o.ordernumber=od.ordernumber
+group by o.ordernumber
+limit 10;
+
+desc orderdetails;
+
+select od.ordernumber,od.quantityordered,od.priceeach,o.orderdate,p.productname,c.customername,o.status
+from orderdetails od inner join orders o using(ordernumber) 
+inner join products p using(productcode)
+inner join customers c using(customernumber)
+order by ordernumber
+limit 10;
+
+SELECT ordernumber,orderdate FROM orders  
+UNION  
+SELECT priceeach,quantityordered FROM orderdetails
+limit 5;
+
+select ordernumber,productname, msrp,priceeach 
+from products p inner join orderdetails od
+on p.productcode = od.productcode and p.msrp>od.priceeach
+where p.productcode='s10_1678' and od.priceeach>84;
+
+# left join
+
+select customername,c.customernumber,o.ordernumber
+from customers c left join orders o using(customernumber)
+where o.ordernumber is null;
+
+#write a query to find out all the products which are not part of orderdetails
+select p.productcode,p.productname,od.ordernumber
+from products p left join orderdetails od using(productcode)
+where od.ordernumber is null;
+
+select customername, e.firstname, p.checknumber,p.amount
+from customers c left join employees e
+on c.salesrepEmployeeNumber = e.employeeNumber
+left join payments p
+on c.customernumber=p.customernumber
+where e.employeenumber is null and p.checknumber is null;
+
+desc payments;
+
+select customername , e.firstname 
+from customers c right join employees e 
+on c.salesEmployeeNumber = e.employeeNumber
+where customername is null;
+
+select employeenumber ,lastname,firstname ,reportsto from employees;
+
+select b.employeenumber,concat(b.lastname," ",b.firstname) "Employye name",concat(a.lastname," ", a.firstname) "manager", a.employeenumber 
+from employees a right join employees b 
+on a.employeenumber = b.reportsto;
+
+create table suits(suit_id int ,suit_name varchar(10));
+insert into suits values(1,'Hearts'),(2,'Diamonds'),(3,'Clubs'),(4,'Spades');
+create table ranks(rank_id int , rank_name varchar(5));
+insert into ranks values(1,'ACE'),(2,'2'),(3,'3'),(4,'4'),(5,'5'),(6,'6'),(7,'7'),(8,'8'),(9,'9'),(10,'10'),(11,'jack'),(12,'queen'),(13,'king');
+
+select suit_name,rank_name
+from suits cross join ranks
+order by suit_name,rank_name;
+
+#Sub Queries
+
+select concat(firstname,'',lastname) "Employee" 
+from employees 
+where officecode in (select officecode from offices where country ="USA");
+
+select customername 
+from customers 
+where customernumber = (select customernumber from payments where amount =(select max(amount) from payments));
+
+select customername 
+from customers 
+where customernumber in (select customernumber from payments where amount >(select avg(amount) from payments)) limit 10;
+
+select customername,country,state 
+from customers 
+where (country,state) in (select country,state from customers where country ="USA" and state="CA");
+
+#co_related Sub Queries 
+
+select productcode from products p where not exists(select 1 from orderdetails od where  od.productcode = p.productcode);
+
+#UNION
+
+select concat(firstname," ",lastname) from employees
+union
+select concat(contactfirstname," ",contactlastname) from customers;
+
+
+select concat(firstname," ",lastname) from employees
+intersect
+select concat(contactfirstname," ",contactlastname) from customers;
